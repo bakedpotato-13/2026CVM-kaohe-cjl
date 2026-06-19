@@ -1,0 +1,10 @@
+*.docx
+*.png
+report_images/
+__pycache__/
+*.pyc
+.vscode/
+.DS_Store
+thumbs.db
+generate_report.py
+profiler.tar

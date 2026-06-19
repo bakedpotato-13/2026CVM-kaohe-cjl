@@ -1,0 +1,25 @@
+stress-ng: info:  [4637] setting to a 30 second run per stressor
+stress-ng: info:  [4637] dispatching hogs: 1 vm
+stress-ng: info:  [4637] successful run completed in 30.01s
+
+ Performance counter stats for 'stress-ng --vm 1 --vm-bytes 1G --vm-method read64 --vm-keep -t 30s':
+
+    69,454,212,304      cycles                                                                  (33.38%)
+                 0      instructions                     #    0.00  insn per cycle              (33.37%)
+                 0      cache-references                                                        (33.31%)
+                 0      cache-misses                                                            (33.30%)
+                 0      L1-dcache-load-misses                                                   (33.30%)
+                 0      L1-icache-load-misses                                                   (33.33%)
+   <not supported>      LLC-load-misses                                                       
+                 0      branch-instructions                                                     (33.32%)
+                 0      branch-misses                                                           (33.32%)
+                 0      dTLB-load-misses                                                        (33.36%)
+               192      context-switches                                                      
+                 1      cpu-migrations                                                        
+
+      30.023030327 seconds time elapsed
+
+      29.829632000 seconds user
+       0.127634000 seconds sys
+
+
