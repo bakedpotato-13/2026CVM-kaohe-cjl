@@ -78,11 +78,12 @@ bash run_all.sh
 
 ```bash
 # 方式一：从镜像加载（推荐，无需构建）
+# 先下载 profiler.tar：https://github.com/bakedpotato-13/2026CVM-kaohe-cjl/releases
 cd task2
 docker load -i profiler.tar
 docker run --privileged -d -p 8080:8080 --name cpu-profiler cpu-profiler
 
-# 方式二：从源码构建
+# 方式二：从源码构建（无需下载）
 cd task2
 docker build -t cpu-profiler .
 docker run --privileged -d -p 8080:8080 --name cpu-profiler cpu-profiler
@@ -91,12 +92,14 @@ docker run --privileged -d -p 8080:8080 --name cpu-profiler cpu-profiler
 ### 第五步：查看 Web 界面
 
 ```bash
-# 查看本机 IP 地址
-ip addr show | grep inet
+# 查看本机 IP 地址（找 ens33 或 eth0 那行的 inet 地址）
+ip addr show | grep ens33
 ```
-在浏览器中访问：
-- **本机访问**：http://localhost:8080
-- **其他设备访问**：http://<你的IP地址>:8080（例如 http://192.168.1.100:8080）
+示例输出：
+```
+inet 192.168.95.129/24 ... ens33
+```
+浏览器访问 `http://192.168.95.129:8080`（将 IP 替换为你查到的实际地址）
 
 ### 验证 Profiling 功能
 
