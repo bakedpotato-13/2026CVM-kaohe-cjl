@@ -38,65 +38,72 @@
 
 ---
 
-## 快速复现 — 题目 1
+## 快速复现
 
-### 1a：perf stat 五场景采集
+### 环境准备
+
+```bash
+# 安装必要工具（Ubuntu/Debian）
+sudo apt update
+sudo apt install -y linux-tools-common linux-tools-generic stress-ng gcc git
+# 下载 FlameGraph 工具
+git clone https://github.com/brendangregg/FlameGraph.git ~/FlameGraph
+```
+
+### 第一步：perf stat 五场景采集（题目1a）
 
 ```bash
 cd task1/1-perf-stat
 sudo bash collect_all.sh
 ```
+等待约 3 分钟自动完成，数据保存到 `results/` 目录。
 
-自动记录环境信息，跑 5 类负载（整数/浮点/连续访存/随机访存/分支），产出见 `results/`。
-
-### 1b：火焰图生成
+### 第二步：火焰图生成（题目1b）
 
 ```bash
 cd task1/2-flamegraph
 bash generate_flame.sh
 ```
+等待约 30 秒，SVG 火焰图保存到 `flamegraphs/` 目录，双击 SVG 文件可在浏览器中交互查看。
 
-采集 2 种负载（matrixprod + queens），生成 SVG 火焰图到 `flamegraphs/`。
-
-> **注意**：热点的函数名显示依赖 stress-ng 编译参数。
-> 本仓库已附带从源码编译的 stress-ng（带 `-fno-omit-frame-pointer`），
-> 如需自行编译：`git clone https://github.com/ColinIanKing/stress-ng.git && cd stress-ng && make -j$(nproc) CFLAGS="-g -fno-omit-frame-pointer -O2" && sudo cp stress-ng /usr/bin/stress-ng`
-
-### 1c：Cache Line 测试
+### 第三步：Cache Line 测试（题目1c）
 
 ```bash
 cd task1/3-cache-line-test
 bash run_all.sh
 ```
+自动编译 C 程序、运行 10 种步长测试并生成火焰图。
 
-编译 C 程序 → 跑 10 种步长 → 生成 stride=1 和 stride=64 的火焰图对比。
-
----
-
-## 快速复现 — 题目 2（Docker 持续 Profiling）
-
-### 方式一：从镜像加载（推荐）
+### 第四步：Docker Profiling 工具（题目2 选做）
 
 ```bash
-docker load -i task2/profiler.tar
+# 方式一：从镜像加载（推荐，无需构建）
+cd task2
+docker load -i profiler.tar
 docker run --privileged -d -p 8080:8080 --name cpu-profiler cpu-profiler
-```
 
-浏览器打开 `http://localhost:8080`
-
-### 方式二：从源码构建
-
-```bash
+# 方式二：从源码构建
 cd task2
 docker build -t cpu-profiler .
 docker run --privileged -d -p 8080:8080 --name cpu-profiler cpu-profiler
 ```
 
-### 功能验证
+### 第五步：查看 Web 界面
 
-1. 浏览器访问 `http://localhost:8080`
-2. 点击 **"开始压力测试"**，等待 30 秒
-3. 点击蓝色时间块，查看火焰图中 stress-ng 热点
+```bash
+# 查看本机 IP 地址
+ip addr show | grep inet
+```
+在浏览器中访问：
+- **本机访问**：http://localhost:8080
+- **其他设备访问**：http://<你的IP地址>:8080（例如 http://192.168.1.100:8080）
+
+### 验证 Profiling 功能
+
+1. 打开 Web 页面，点击 **"开始压力测试"**
+2. 等待 30 秒
+3. 找到对应时间段的蓝色块并点击
+4. 页面显示火焰图，热点列表中 stress-ng 函数名可正常显示
 
 ---
 
