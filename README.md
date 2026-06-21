@@ -78,7 +78,8 @@ bash run_all.sh
 
 ```bash
 # 方式一：从镜像加载（推荐，无需构建）
-# 先下载 profiler.tar：https://github.com/bakedpotato-13/2026CVM-kaohe-cjl/releases
+# 用 curl 从 Release 下载 profiler.tar（约170MB，网络慢可能需数分钟）
+curl -L https://github.com/bakedpotato-13/2026CVM-kaohe-cjl/releases/download/v1/profiler.tar -o profiler.tar
 cd task2
 docker load -i profiler.tar
 docker run --privileged -d -p 8080:8080 --name cpu-profiler cpu-profiler
