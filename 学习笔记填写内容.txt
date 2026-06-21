@@ -1,0 +1,83 @@
+=== 报名项目 ===
+项目4（CVM竞品微架构性能测评）
+
+=== 选择此项目的原因 ===
+想要更多的尝试去做一些感兴趣以及与自己专业相关的内容。我学的是集成电路设计与集成系统，平时接触硬件比较多，CPU微架构分析正好是硬件与软件的交汇点，所以选了项目4。
+
+=== 项目难点（可多选） ===
+1. 环境配置：VMware虚拟机下perf的PMU硬件计数器默认不可用，perf stat的instructions、cache-misses等事件全部显示为0，需要排查虚拟化限制。
+2. 根据数据进行分析：perf输出的指标需要结合CPU微架构原理解释，五种负载之间如何横向对比需要一定硬件知识背景。
+3. Docker + perf集成：容器内perf版本需与宿主机内核匹配，否则无法正常工作。
+
+=== 岗位职能分析（我可以负责什么） ===
+从硬件角度考虑。因为是学集成电路设计与集成系统的，接触硬件比较多，所以可以负责perf性能指标的采集和分析、火焰图热点解读、CPU Cache机制验证测试，以及从硬件微架构角度解释性能差异。
+
+=== 搜集到的学习资料 ===
+1. 《Brendan Gregg性能之巅》第二版 — perf工具使用
+2. FlameGraph官方文档 brendangregg.com/flamegraphs.html — 火焰图生成与分析
+3. 《深入理解计算机系统》CSAPP第4-6章 — CPU微架构基础
+4. Ulrich Drepper《What Every Programmer Should Know About Memory》 — Cache机制
+5. Docker官方文档 — 容器化部署
+6. stress-ng GitHub仓库README — 压力测试工具
+7. Linux man perf-stat / man perf-record — perf命令参考
+
+=== 制定的学习计划 ===
+6月14日（日）晚：安装perf、stress-ng、FlameGraph工具链，完成环境配置
+6月15日（一）：perf stat五场景采集+火焰图生成，学习perf命令用法
+6月16日（二）：Cache Line微基准测试（C语言编程+perf采集+结果分析）
+6月17-18日（三-四）：Docker持续CPU Profiling工具开发学习
+6月19日（五）：报告撰写、文档整理
+6月20-21日（六-日）：收尾提交
+（以上计划已全部完成）
+
+=== 空雨伞格式（事实-解释-行动） ===
+
+空（事实）：perf stat的instructions、cache-misses等指标全部显示为0
+雨（解释）：VMware虚拟机未透传PMU硬件性能计数器
+伞（行动）：在报告中注明虚拟化环境限制，改用cycles、context-switches等可用指标分析
+
+空（事实）：火焰图中stress-ng显示为[unknown]，看不出具体函数名
+雨（解释）：Ubuntu预编译的stress-ng未启用帧指针（-fno-omit-frame-pointer）
+伞（行动）：从GitHub克隆stress-ng源码，添加CFLAGS="-g -fno-omit-frame-pointer -O2"重新编译，替换后火焰图正确显示stress_cpu_matrix_prod.arch_znver3.17（占99.69%）和queens_try（占84%-99%）
+
+空（事实）：Docker容器中perf record报错"perf not found for kernel"
+雨（解释）：容器内的perf版本与宿主机内核不匹配
+伞（行动）：entrypoint脚本启动时自动apt-get install -y linux-tools-$(uname -r)
+
+=== 学习心得1 ===
+
+问题1（在做题过程中遇到的问题）：
+perf stat的instructions、cache-misses等指标全部显示为0，无法计算IPC、Cache Miss Rate等衍生指标
+
+自己对问题的理解或预判：
+可能是虚拟机没有把CPU的性能计数器透传给客户机，也可能是perf_event_paranoid权限设置问题
+
+曾采取的行动或措施：
+1. 检查/proc/sys/kernel/perf_event_paranoid设置为4，改为1
+2. 在.vmx文件中添加pmu.virtualize = TRUE并冷启动虚拟机
+3. 最终确认是VMware对AMD CPU的PMU透传支持有限
+
+AI对此问题的回答：
+（使用Reasonix Code）AI诊断出是因为VMware虚拟化限制导致PMU未透传，建议在报告中明确说明测试环境限制，改用可用指标（cycles、context-switches）分析
+
+是否向导师进一步提问：
+AI的回答可以解决问题，暂时不需要向导师提问
+
+=== 学习心得2 ===
+
+问题2（在做题过程中遇到的问题）：
+火焰图中stress-ng的函数全部显示为[unknown]，无法判断热点在哪
+
+自己对问题的理解或预判：
+可能是perf采集时栈信息不足，或者stress-ng编译时没带帧指针
+
+曾采取的行动或措施：
+1. 尝试使用--call-graph dwarf参数重新采集，效果有限
+2. 从GitHub克隆stress-ng源码，用make CFLAGS="-g -fno-omit-frame-pointer -O2"编译
+3. 将编译好的stress-ng替换系统版本后重新生成火焰图
+
+AI对此问题的回答：
+（使用Reasonix Code）AI指出Ubuntu预编译的stress-ng未启用帧指针（-fno-omit-frame-pointer），perf的fp模式无法解析调用栈。建议从GitHub源码编译带帧指针的版本。实施后火焰图正确显示stress_cpu_matrix_prod.arch_znver3.17（matrixprod热点，占99.69%）和queens_try（N皇后回溯函数，占84%-99%）
+
+是否向导师进一步提问：
+AI的回答可以解决问题，暂时不需要向导师提问
