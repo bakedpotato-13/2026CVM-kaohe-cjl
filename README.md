@@ -122,18 +122,20 @@ docker run --privileged -d -p 8080:8080 --name cpu-profiler cpu-profiler
 │   ├── src/cache_line_test.c
 │   ├── run_all.sh
 │   ├── results/
-│   └── flamegraphs/
+│   ├── flamegraphs/
+│   └── ai-chat-log/           ← AI辅助编程对话记录
 │
 ├── task2/                             ← 题目2（选做）
 │   ├── README.md
 │   ├── Dockerfile
 │   ├── docker-entrypoint.sh
-│   ├── profiler.tar                   ← 可直接加载的镜像
+│   ├── profiler.tar                   ← 可直接加载的镜像（由于文件大小 镜像在releases）
 │   ├── src/
 │   │   ├── collector.sh
 │   │   ├── query.sh
 │   │   └── server.py
-│   └── test/
+│   ├── test/
+│   └── ai-chat-log/           ← AI辅助编程对话记录
 │
 ├── report_项目4_CVM微架构分析.docx     ← 完整报告（含图）
 └── report_images/
